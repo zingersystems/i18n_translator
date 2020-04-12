@@ -45,16 +45,14 @@ An example config file may be as shown below.
 
 ``` json
 {
-  "en" : // This line is confiuration for en locale
-  [
+  "en" : [
     {
       "prefix" : "module_1",
       "filename" : "en/module-1-en.json"
     },
     "en/module-2-en.json"
   ],
-  "fr" :  // This line is confiuration for fr locale
-  [
+  "fr" : [
     {
       "prefix" : "module_1",
       "filename" : "en/module-1-fr.json"
@@ -195,8 +193,8 @@ This package depends on:
 Contributions are always welcome!
 
 ## Work with us
-hello@zingersystems.com
-labs@activspaces.com
+* hello[at]zingersystems.com
+* labs[at]zingersystems.com
 
 
 ## License
