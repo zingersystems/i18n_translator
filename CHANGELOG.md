@@ -1,3 +1,6 @@
+## 0.1.2
+* Edited package summary and readme files.
+
 ## 0.1.1
 * Minor formatting.
 

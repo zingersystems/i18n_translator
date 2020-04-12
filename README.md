@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/i18n_translator.svg)](https://pub.dartlang.org/packages/i18n_translator)
 
-Internationalize your Flutter Apps without the hassle. This package simplifies i18n/i10n during development by facilitating modularization and collaboration between team members during the internationalizing process of the app development cycle.
+A flutter package designed to make internationalizing your flutter app a breeze. This package simplifies i18n/i10n during development by facilitating modularization and collaboration between team members during the internationalizing process of the app development cycle.
 
 ## Why
 
