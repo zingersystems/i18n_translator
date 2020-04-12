@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../providers/translator_provider.dart';
+import '../../i18n_translator.dart';
 
 part 'translator_widget_bloc.dart';
 part 'translator_widget_event.dart';
@@ -31,9 +32,11 @@ class TranslatorWidget extends StatefulWidget {
     this.provider,
     this.loaderColor = Colors.white,
   })  : assert(child != null),
-        assert(supportedLocales?.isNotEmpty == true),
-        assert(langConfigFile?.isNotEmpty == true),
-        assert(langDirectory?.isNotEmpty == true),
+
+        assert( (provider != null) || (supportedLocales != null)),
+        assert( (provider != null) || (langConfigFile != null)),
+        assert( (provider != null) || (langDirectory != null)),
+
         super(key: key);
 
   @override
@@ -49,18 +52,24 @@ class _TranslatorWidgetState extends State<TranslatorWidget> {
   void initState() {
     super.initState();
     _bloc = TranslatorWidgetBloc(
-        supportedLocales: widget.supportedLocales,
-        locale: widget.locale,
-        langConfigFile: widget.langConfigFile,
-        langDirectory: widget.langDirectory,
+        supportedLocales: widget.provider?.supportedLocales ??  widget.supportedLocales,
+        locale: widget.provider?.locale ?? widget.locale,
+        langConfigFile: widget.provider?.langConfigFile ?? widget.langConfigFile,
+        langDirectory: widget.provider?.langDirectory ?? widget.langDirectory,
         provider: widget.provider
     );
 
+    //NOTE: Here we have to redefine the global translator variable
+    translator = _bloc.provider;
   }
 
   @override
   void dispose() {
+    // Restore translator to the default
+    translator = Translator();
+    // Close or dispose the bloc
     _bloc?.close();
+    // Dispose the state widget
     super.dispose();
   }
 

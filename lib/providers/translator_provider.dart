@@ -24,8 +24,8 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>>{
 
   List<Locale> _supportedLocales;
   Locale _locale;
-  String _langAssetConfigFile;
-  String _langAssetDirectory;
+  String _langConfigFile;
+  String _langDirectory;
 
   TranslatorProvider({
     @required List<Locale> supportedLocales,
@@ -38,8 +38,8 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>>{
 
     this._supportedLocales = supportedLocales;
     this._locale = locale;
-    this._langAssetConfigFile = langConfigFile;
-    this._langAssetDirectory = langDirectory;
+    this._langConfigFile = langConfigFile;
+    this._langDirectory = langDirectory;
   }
 
   /// Define a static method that will play the role of a singleton if needed.
@@ -94,6 +94,16 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>>{
   /// Returns whether or not the sentences for this translation provider are loaded
   bool get isLoaded {
     return  (_locale != null) && (_sentences?.isNotEmpty == true);
+  }
+
+  /// Getter and Setter for the langConfigFile
+  String get langConfigFile {
+    return  _langConfigFile;
+  }
+
+  /// Getter and Setter for the langDirectory
+  String get langDirectory {
+    return  _langDirectory;
   }
 
   /// Getter and Setter for the current local
@@ -172,41 +182,25 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>>{
   /// Sets the locale based on the current context.
   /// and loads the translation strings if the passed [locale] is different
   /// from the current
-  Future<void> setLocale(Locale locale, {BuildContext context}) async {
+  Future<void> setLocale(Locale locale) async {
 
     // We need to make sure the locale that is being set is supported
     assert(isSupported(locale), "The locale ($locale) that is being set is not contained in supported locales for the defined Translator.");
 
     // Check that it is not same as old locale
     if (locale?.toString()?.toLowerCase() != _locale?.toString()?.toLowerCase()) {
-      // Fire the locale translation update via the Translator widget if available
-      if (context != null){
-        if ( BlocProvider.of<TranslatorWidgetBloc>(context) != null){
-          // Reload the translation via the parent translator bloc widget
-          BlocProvider.of<TranslatorWidgetBloc>(context).add(UpdateLocaleEvent(locale));
-        }
-        else if ( Localizations.of<TranslatorProvider>(context, TranslatorProvider) != null){
-          // Reload the translation via the parent localization inherited widget
-          await Localizations.of<TranslatorProvider>(context, TranslatorProvider).load(locale);
-        }
-        else {
-          // Reload the translation via this provider or delegate
-          await this.load(locale);
-        }
-      } else {
-        // Reload the translation via this provider or delegate
-        await this.load(locale);
-      }
+      // Reload the translation via this provider or delegate
+      await this.load(locale);
     }
   }
 
-  String t(String key, {String prefix = ''}) {
+  String t(String key, {String prefix}) {
     key = (prefix?.isNotEmpty == true) ? "${prefix}_$key" : key;
     return (_sentences?.containsKey(key) == true) ? _sentences[key].toString() : key;
   }
 
   /// Long form of t function
-  String translate(String key, {String prefix = ''}){
+  String translate(String key, {String prefix}){
     return t(key, prefix:prefix);
   }
 
@@ -235,7 +229,7 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>>{
     assert(isSupported(locale), "The locale ($locale) that translation is requested for is not contained in supported locales for the defined Translator.");
 
     // First we read the config file to extract the other translation files.
-    Map _config = json.decode(await rootBundle.loadString("$_langAssetDirectory$_langAssetConfigFile"));
+    Map _config = json.decode(await rootBundle.loadString("$_langDirectory$_langConfigFile"));
     if (_config?.isNotEmpty == true){
 
       // Let's search for keys that march that of our locale
@@ -260,7 +254,7 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>>{
             String prefix = entry['prefix'].toString();
             String filename = entry['filename'].toString();
 
-            Map _trans = json.decode(await rootBundle.loadString("$_langAssetDirectory$filename"));
+            Map _trans = json.decode(await rootBundle.loadString("$_langDirectory$filename"));
 
             if (_trans?.isNotEmpty == true){
               (_translations ??= {}).addAll(_trans.map((key, value){
@@ -270,7 +264,7 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>>{
 
           } else if (entry is String){
             String filename = entry;
-            Map _trans = json.decode(await rootBundle.loadString("$_langAssetDirectory$filename"));
+            Map _trans = json.decode(await rootBundle.loadString("$_langDirectory$filename"));
             if (_trans?.isNotEmpty == true){
               (_translations ??= {}).addAll(_trans);
             }

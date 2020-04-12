@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:i18n_translator/i18n_translator.dart';
+import 'package:i18n_translator/views/translator_app/translator_app.dart';
 
-void main() async{
-  // Ensure bindings are initialized.
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Define a static instance of the the Translator provider.
-  await Translator(
-    //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
-      supportedLocales: [const Locale('en'), const Locale('fr')],
-      langConfigFile: 'config.json',
-      langDirectory: 'assets/lang/'
-  ).load();
-
+void main() {
   // Run the app
-  runApp( MyApp() );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -23,11 +13,42 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: translate('app_title'),  //Only use if a singleton is instantiated and loaded.
-      supportedLocales: Translator()?.supportedLocales, //Only use if a singleton is instantiated and loaded.
-      localizationsDelegates: Translator()?.delegates, //Only use if a singleton is instantiated and loaded.
-      localeResolutionCallback: Translator()?.resolveSupportedLocale, //Only use if a singleton is instantiated and loaded.
+
+    /// Example singleton translator provider instance defined but NOT loaded
+    /*translator = Translator(
+      //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
+        supportedLocales: [const Locale('en'), const Locale('fr')],
+        langConfigFile: 'config.json',
+        langDirectory: 'assets/lang/'
+    );*/
+
+    /// Use a custom Material App as base of the widget.
+    /// If [provider] is supplied, it will override [supportedLocales], [locale]
+    /// [langConfigFile] and [langDirectory]. If not provided, then the other
+    /// localization fields will be required and it this case will be
+    /// instantiated by the widget itself.
+    ///
+    /// If a singleton instance is not instantiated and loaded as illustrated
+    /// in the main method in the main_singleton_example.dart file, then one may
+    /// not use the defined [translate] function before the widget is built.
+    /// This is to say without a proper reference to a translator provide
+    /// instance, any call to the [translate] function will yield an error.
+    ///
+    /// Both [TranslatorWidget] and [TranslatorMaterialApp] make use of BlocProvider
+    /// from the flutter_bloc package. This means each descendant of the widget may
+    /// access the parent [TranslatorWidgetBloc] bloc by calling
+    /// [BlocProvider.of<TranslatorWidgetBloc>(context)] and the associated
+    /// TranslatorProvider by calling [BlocProvider.of<TranslatorWidgetBloc>(context).provider].
+    /// This way, all descendant widgets can have access to the parent bloc and thus the translator provider.
+
+    return TranslatorMaterialApp(
+      //provider: translator, // Use with a singleton class
+      title: 'My App',
+      // title: translate('app_title'), //Only use if a singleton is instantiated and loaded.
+      //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
+      supportedLocales: [const Locale('en'), const Locale('fr')], // Optional is provider is present
+      langConfigFile: 'config.json', // Optional is provider is present
+      langDirectory: 'assets/lang/', // Optional is provider is present
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -41,7 +62,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(
-          title: translate('home_title') //Only use if a singleton is instantiated and loaded.
+          title: 'Home'
+          //title: translate('home_title') //Only use if a singleton is instantiated and loaded.
       ),
     );
   }
@@ -81,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -114,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              translate('pushed_number_of_times', prefix: "home_page_one"), //Only use if a singleton is instantiated and loaded.
+              translate('pushed_number_of_times', prefix: "home_page_one"),
             ),
             Text(
               '$_counter',
@@ -125,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
-        tooltip: translate('increment'), //Only use if a singleton is instantiated and loaded.
+        tooltip: translate('increment'),
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );

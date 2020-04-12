@@ -9,9 +9,9 @@ void main() async{
   // Define a static instance of the the Translator provider.
   await Translator(
     //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
-      supportedLocales: [const Locale('en'), const Locale('fr')],
-      langConfigFile: 'config.json',
-      langDirectory: 'assets/lang/'
+    supportedLocales: [const Locale('en'), const Locale('fr')],
+    langConfigFile: 'config.json',
+    langDirectory: 'assets/lang/'
   ).load();
 
   // Run the app

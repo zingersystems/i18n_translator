@@ -15,7 +15,10 @@ class TranslatorWidgetBloc extends Bloc<TranslatorWidgetEvent, TranslatorWidgetS
     this.langDirectory = 'assets/lang/',
     this.locale,
     this.provider
-  }) : assert(supportedLocales?.isNotEmpty == true) {
+  }) :  assert( (provider != null) || (supportedLocales != null)),
+        assert( (provider != null) || (langConfigFile != null)),
+        assert( (provider != null) || (langDirectory != null))
+  {
 
     // Ensure to initialize the provider
     provider ??= TranslatorProvider(
