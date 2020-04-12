@@ -10,9 +10,7 @@ part 'translator_widget_bloc.dart';
 part 'translator_widget_event.dart';
 part 'translator_widget_state.dart';
 
-
 class TranslatorWidget extends StatefulWidget {
-
   final Widget child;
   final List<Locale> supportedLocales;
   final Locale locale;
@@ -31,32 +29,29 @@ class TranslatorWidget extends StatefulWidget {
     this.provider,
     this.loaderColor = Colors.white,
   })  : assert(child != null),
-
-        assert( (provider != null) || (supportedLocales != null)),
-        assert( (provider != null) || (langConfigFile != null)),
-        assert( (provider != null) || (langDirectory != null)),
-
+        assert((provider != null) || (supportedLocales != null)),
+        assert((provider != null) || (langConfigFile != null)),
+        assert((provider != null) || (langDirectory != null)),
         super(key: key);
 
   @override
   _TranslatorWidgetState createState() => _TranslatorWidgetState();
-
 }
 
 class _TranslatorWidgetState extends State<TranslatorWidget> {
-
   TranslatorWidgetBloc _bloc;
 
   @override
   void initState() {
     super.initState();
     _bloc = TranslatorWidgetBloc(
-        supportedLocales: widget.provider?.supportedLocales ??  widget.supportedLocales,
+        supportedLocales:
+            widget.provider?.supportedLocales ?? widget.supportedLocales,
         locale: widget.provider?.locale ?? widget.locale,
-        langConfigFile: widget.provider?.langConfigFile ?? widget.langConfigFile,
+        langConfigFile:
+            widget.provider?.langConfigFile ?? widget.langConfigFile,
         langDirectory: widget.provider?.langDirectory ?? widget.langDirectory,
-        provider: widget.provider
-    );
+        provider: widget.provider);
 
     //NOTE: Here we have to redefine the global translator variable
     translator = _bloc.provider;
@@ -78,11 +73,10 @@ class _TranslatorWidgetState extends State<TranslatorWidget> {
       value: _bloc,
       child: BlocBuilder(
         bloc: _bloc,
-        builder: (context, state){
+        builder: (context, state) {
           return widget.child;
         },
       ),
     );
   }
-
 }

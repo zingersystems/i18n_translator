@@ -6,7 +6,6 @@ import '../translator_widget/translator_widget.dart';
 import '../../providers/translator_provider.dart';
 import '../../i18n_translator.dart';
 
-
 class TranslatorMaterialApp extends StatefulWidget {
   /// Creates a MaterialApp.
   ///
@@ -21,11 +20,9 @@ class TranslatorMaterialApp extends StatefulWidget {
   /// The boolean arguments, [routes], and [navigatorObservers], must not be null.
   const TranslatorMaterialApp({
     Key key,
-
     this.langConfigFile = 'config.json',
     this.langDirectory = 'assets/lang/',
     this.provider,
-
     this.navigatorKey,
     this.home,
     this.routes = const <String, WidgetBuilder>{},
@@ -51,10 +48,9 @@ class TranslatorMaterialApp extends StatefulWidget {
     this.checkerboardOffscreenLayers = false,
     this.showSemanticsDebugger = false,
     this.debugShowCheckedModeBanner = true,
-  }) :  assert( (provider != null) || (supportedLocales != null)),
-        assert( (provider != null) || (langConfigFile != null)),
-        assert( (provider != null) || (langDirectory != null)),
-
+  })  : assert((provider != null) || (supportedLocales != null)),
+        assert((provider != null) || (langConfigFile != null)),
+        assert((provider != null) || (langDirectory != null)),
         assert(routes != null),
         assert(navigatorObservers != null),
         assert(title != null),
@@ -66,12 +62,13 @@ class TranslatorMaterialApp extends StatefulWidget {
         assert(debugShowCheckedModeBanner != null),
         super(key: key);
 
-
   /// Let's define some translator material app specific fields.
   /// The language asset config file
   final String langConfigFile;
+
   /// The language asset directory
   final String langDirectory;
+
   /// The language delegate or provider
   final TranslatorProvider provider;
 
@@ -342,7 +339,6 @@ class TranslatorMaterialApp extends StatefulWidget {
 
   @override
   _TranslatorMaterialAppState createState() => _TranslatorMaterialAppState();
-
 }
 
 class _TranslatorMaterialAppState extends State<TranslatorMaterialApp> {
@@ -353,16 +349,16 @@ class _TranslatorMaterialAppState extends State<TranslatorMaterialApp> {
   void initState() {
     super.initState();
     _bloc = TranslatorWidgetBloc(
-        supportedLocales: widget.provider?.supportedLocales ??  widget.supportedLocales,
+        supportedLocales:
+            widget.provider?.supportedLocales ?? widget.supportedLocales,
         locale: widget.provider?.locale ?? widget.locale,
-        langConfigFile: widget.provider?.langConfigFile ?? widget.langConfigFile,
+        langConfigFile:
+            widget.provider?.langConfigFile ?? widget.langConfigFile,
         langDirectory: widget.provider?.langDirectory ?? widget.langDirectory,
-        provider: widget.provider
-    );
+        provider: widget.provider);
 
     //NOTE: Here we have to redefine the global translator variable
     translator = _bloc.provider;
-
   }
 
   @override
@@ -381,7 +377,7 @@ class _TranslatorMaterialAppState extends State<TranslatorMaterialApp> {
       value: _bloc,
       child: BlocBuilder(
         bloc: _bloc,
-        builder: (context, state){
+        builder: (context, state) {
           return MaterialApp(
             navigatorKey: widget.navigatorKey,
             home: widget.home,
@@ -401,7 +397,8 @@ class _TranslatorMaterialAppState extends State<TranslatorMaterialApp> {
             localizationsDelegates: _bloc.provider.delegates,
             localeResolutionCallback: widget.localeResolutionCallback ??
                 _bloc.provider.resolveSupportedLocale,
-            supportedLocales: widget.supportedLocales ?? _bloc.provider.supportedLocales,
+            supportedLocales:
+                widget.supportedLocales ?? _bloc.provider.supportedLocales,
             debugShowMaterialGrid: widget.debugShowMaterialGrid,
             showPerformanceOverlay: widget.showPerformanceOverlay,
             checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,

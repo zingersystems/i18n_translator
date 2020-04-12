@@ -5,14 +5,14 @@ abstract class TranslatorWidgetState {
   TranslatorWidgetState([this.event]);
 }
 
-class InitState extends TranslatorWidgetState{
-  InitState([TranslatorWidgetEvent event]): super(event);
+class InitState extends TranslatorWidgetState {
+  InitState([TranslatorWidgetEvent event]) : super(event);
 }
 
-class LoadingState extends TranslatorWidgetState{
-  LoadingState([TranslatorWidgetEvent event]): super(event);
+class LoadingState extends TranslatorWidgetState {
+  LoadingState([TranslatorWidgetEvent event]) : super(event);
 }
 
-class BuildState extends TranslatorWidgetState{
-  BuildState([TranslatorWidgetEvent event]): super(event);
-} 
+class BuildState extends TranslatorWidgetState {
+  BuildState([TranslatorWidgetEvent event]) : super(event);
+}

@@ -2,25 +2,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-//import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_device_locale/flutter_device_locale.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../views/translator_widget/translator_widget.dart';
-
-
 class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>>{
-
-  /*static final Translator _instance = Translator._internal();
-
-  // Singleton accessor
-  static Translator get instance => _instance;
-
-  // A private constructor. Allows us to create instances of Translator
-  // only from within the Translator class itself.
-  Translator._internal();*/
 
   List<Locale> _supportedLocales;
   Locale _locale;
@@ -68,24 +54,6 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>>{
       return null;
     }
   }
-
-
-  /*factory Translator({
-    @required List<Locale> supportedLocales,
-    Locale locale,
-    String langConfigFile = 'config.json',
-    String langDirectory = 'assets/lang/'
-  }) {
-
-    assert((supportedLocales?.isNotEmpty == true),  "The list of supported locales must be set.");
-
-    _instance._supportedLocales = supportedLocales;
-    _instance._locale = locale;
-    _instance._langAssetConfigFile = langConfigFile;
-    _instance._langAssetDirectory = langDirectory;
-
-    return _instance;
-  }*/
 
   // Let's define some internal variables
   String _savedLocaleKey = 'savedLocale';

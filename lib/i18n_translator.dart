@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 
 import 'providers/translator_provider.dart';
 
-typedef TranslatorProviderGetter<T> = T Function({
-  List<Locale> supportedLocales,
-  Locale locale,
-  String langConfigFile,
-  String langDirectory
-});
+typedef TranslatorProviderGetter<T> = T Function(
+    {List<Locale> supportedLocales,
+    Locale locale,
+    String langConfigFile,
+    String langDirectory});
 
 typedef TranslatorGetter<T> = T Function();
 typedef TranslationGetter<T> = T Function(String key, {String prefix});
@@ -19,7 +18,8 @@ typedef TranslationGetter<T> = T Function(String key, {String prefix});
 /// it is justified why we name the type Translator with capital T since
 /// it behaves like and instance of a class.
 // ignore: non_constant_identifier_names
-TranslatorProviderGetter<TranslatorProvider> Translator = TranslatorProvider.instance;
+TranslatorProviderGetter<TranslatorProvider> Translator =
+    TranslatorProvider.instance;
 
 /// Short hand for static instance of translator
 TranslatorProvider translator = Translator();
@@ -28,6 +28,3 @@ TranslatorProvider translator = Translator();
 /// These short hands will return null if translator is null.
 TranslationGetter<String> translate = translator?.translate;
 TranslationGetter<String> t = translator?.translate;
-
-
-
