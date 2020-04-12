@@ -1,0 +1,13 @@
+{
+  "en" : [
+    {
+      "prefix" : "home_page_one",
+      "filename" : "en/home-page-one-en.json"
+    },
+    "en/home-page-two-en.json"
+  ],
+  "fr" : [
+    "fr/home-page-one-fr.json",
+    "fr/home-page-two-fr.json"
+  ]
+}
