@@ -1,8 +1,7 @@
 name: i18n_translator
 description: A flutter package design for easy translation or localization that borrows a lot of it's behavior from easy_localization package.
 version: 0.0.1
-author: Valery Colong<valery.colong@activspaces.com>
-homepage: https://github.com/valerycolong/i18n_translator
+homepage: https://github.com/zingersystems/i18n_translator
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
