@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'package:i18n_translator/i18n_translator.dart';
+import 'package:i18n_translator/providers/translator_provider.dart';
 
 void main() async{
   // Ensure bindings are initialized.
   WidgetsFlutterBinding.ensureInitialized();
 
   // Define a static instance of the the Translator provider.
-  translator = Translator(
+  translator = TranslatorProvider(
     //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
       supportedLocales: [const Locale('en'), const Locale('fr')],
       langConfigFile: 'config.json',
@@ -29,9 +30,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: translate('app_title'),  //Only use if a singleton is instantiated and loaded.
-      supportedLocales: Translator()?.supportedLocales, //Only use if a singleton is instantiated and loaded.
-      localizationsDelegates: Translator()?.delegates, //Only use if a singleton is instantiated and loaded.
-      localeResolutionCallback: Translator()?.resolveSupportedLocale, //Only use if a singleton is instantiated and loaded.
+      supportedLocales: translator?.supportedLocales, //Only use if a singleton is instantiated and loaded.
+      localizationsDelegates: translator?.delegates, //Only use if a singleton is instantiated and loaded.
+      localeResolutionCallback: translator?.resolveSupportedLocale, //Only use if a singleton is instantiated and loaded.
       theme: ThemeData(
         // This is the theme of your application.
         //

@@ -30,9 +30,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: translate('app_title'),  //Only use if a singleton is instantiated and loaded.
-      supportedLocales: Translator()?.supportedLocales, //Only use if a singleton is instantiated and loaded.
-      localizationsDelegates: Translator()?.delegates, //Only use if a singleton is instantiated and loaded.
-      localeResolutionCallback: Translator()?.resolveSupportedLocale, //Only use if a singleton is instantiated and loaded.
+      supportedLocales: translator?.supportedLocales, //Only use if a singleton is instantiated and loaded.
+      localizationsDelegates: translator?.delegates, //Only use if a singleton is instantiated and loaded.
+      localeResolutionCallback: translator?.resolveSupportedLocale, //Only use if a singleton is instantiated and loaded.
       theme: ThemeData(
         // This is the theme of your application.
         //

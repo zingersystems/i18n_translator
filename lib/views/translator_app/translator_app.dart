@@ -364,7 +364,7 @@ class _TranslatorMaterialAppState extends State<TranslatorMaterialApp> {
   @override
   void dispose() {
     // Restore translator to the default
-    translator = Translator();
+    translator = null;
     // Close or dispose the bloc
     _bloc?.close();
     // Dispose the state widget

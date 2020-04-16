@@ -22,33 +22,6 @@ class TranslatorProvider with TranslatorProviderMixin {
         langDirectory: langDirectory,
         provider: this);
   }
-
-  /// Define a static method that will play the role of a singleton if needed.
-  /// The instance will be created only once based on parameters passed during
-  /// the first call to create the instance. Thereafter, it will return the
-  /// lone existing instance irrespective of passed parameters.
-  static TranslatorProvider _instance;
-
-  static TranslatorProvider instance(
-      {@required List<Locale> supportedLocales,
-      Locale locale,
-      String langConfigFile = 'config.json',
-      String langDirectory = 'assets/lang/'}) {
-    if (_instance != null) {
-      return _instance;
-    } else if (supportedLocales?.isNotEmpty == true) {
-      _instance = TranslatorProvider(
-          supportedLocales: supportedLocales,
-          locale: locale,
-          langConfigFile: langConfigFile,
-          langDirectory: langDirectory);
-      return _instance;
-    } else {
-      debugPrint(
-          "Remember to instantiate before calling the Translator instance method");
-      return null;
-    }
-  }
 }
 
 mixin TranslatorProviderMixin {
