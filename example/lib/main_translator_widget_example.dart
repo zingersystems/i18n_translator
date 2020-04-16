@@ -7,7 +7,7 @@ import 'package:i18n_translator/views/translator_widget/translator_widget.dart';
 
 void main() async {
   // Run the app
-  runApp( MyApp() );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -28,9 +28,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(
-          title: 'Translator Widget'
-      ),
+      home: MyHomePage(title: 'Translator Widget'),
     );
   }
 }
@@ -76,16 +74,16 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return TranslatorWidget(
-        supportedLocales : [const Locale('en'), const Locale('fr')],
-        langConfigFile : 'config.json',
-        langDirectory : 'assets/lang/',
+        supportedLocales: [const Locale('en'), const Locale('fr')],
+        langConfigFile: 'config.json',
+        langDirectory: 'assets/lang/',
         // provider : translator, //Only use if a singleton is instantiated - will override other provided variables
-        child : Builder(
-          builder: (context){
-
+        child: Builder(
+          builder: (context) {
             // The translator/provider is gotten from the parent widget bloc provider
             // It is assigned to [translator] only for convenience
-            translator = BlocProvider.of<TranslatorWidgetBloc>(context).provider;
+            translator =
+                BlocProvider.of<TranslatorWidgetBloc>(context).provider;
 
             return Scaffold(
               appBar: AppBar(
@@ -114,7 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      translate('pushed_number_of_times', prefix: "home_page_one"), // This is called from translator
+                      translate('pushed_number_of_times',
+                          prefix:
+                              "home_page_one"), // This is called from translator
                     ),
                     Text(
                       '$_counter',
@@ -125,12 +125,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               floatingActionButton: FloatingActionButton(
                 onPressed: _incrementCounter,
-                tooltip: translate('increment'), // This is called from translator
+                tooltip:
+                    translate('increment'), // This is called from translator
                 child: Icon(Icons.add),
               ), // This trailing comma makes auto-formatting nicer for build methods.
             );
           },
-        )
-    );
+        ));
   }
 }

@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:i18n_translator/i18n_translator.dart';
 import 'package:i18n_translator/providers/translator_provider.dart';
 
-void main() async{
+void main() async {
   // Ensure bindings are initialized.
   WidgetsFlutterBinding.ensureInitialized();
 
   // Define a static instance of the the Translator provider.
   translator = TranslatorProvider(
-    //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
+      //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
       supportedLocales: [const Locale('en'), const Locale('fr')],
       langConfigFile: 'config.json',
-      langDirectory: 'assets/lang/'
-  );
+      langDirectory: 'assets/lang/');
 
   // When material app is built, the load method of the delegate will be called
   // and the translator provider will load the translation strings.
@@ -23,20 +22,22 @@ void main() async{
   await translator.load();
 
   // Run the app
-  runApp( MyApp() );
-
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: translate('app_title'),  //Only use if a singleton is instantiated and loaded.
-      supportedLocales: translator?.supportedLocales, //Only use if a singleton is instantiated and loaded.
-      localizationsDelegates: translator?.delegates, //Only use if a singleton is instantiated and loaded.
-      localeResolutionCallback: translator?.resolveSupportedLocale, //Only use if a singleton is instantiated and loaded.
+      title: translate(
+          'app_title'), //Only use if a singleton is instantiated and loaded.
+      supportedLocales: translator
+          ?.supportedLocales, //Only use if a singleton is instantiated and loaded.
+      localizationsDelegates: translator
+          ?.delegates, //Only use if a singleton is instantiated and loaded.
+      localeResolutionCallback: translator
+          ?.resolveSupportedLocale, //Only use if a singleton is instantiated and loaded.
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -50,8 +51,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(
-          title: translate('home_title') //Only use if a singleton is instantiated and loaded.
-      ),
+          title: translate(
+              'home_title') //Only use if a singleton is instantiated and loaded.
+          ),
     );
   }
 }
@@ -123,7 +125,9 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              translate('pushed_number_of_times', prefix: "home_page_one"), //Only use if a singleton is instantiated and loaded.
+              translate('pushed_number_of_times',
+                  prefix:
+                      "home_page_one"), //Only use if a singleton is instantiated and loaded.
             ),
             Text(
               '$_counter',
@@ -134,7 +138,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
-        tooltip: translate('increment'), //Only use if a singleton is instantiated and loaded.
+        tooltip: translate(
+            'increment'), //Only use if a singleton is instantiated and loaded.
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );

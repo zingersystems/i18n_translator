@@ -9,11 +9,9 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
     /// Use a custom Material App as base of the widget.
     /// If [provider] is supplied, it will override [supportedLocales], [locale]
     /// [langConfigFile] and [langDirectory]. If not provided, then the other
@@ -38,7 +36,10 @@ class MyApp extends StatelessWidget {
       title: 'My App',
       // title: translate('app_title'), //Only use if a singleton is instantiated and loaded.
       //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
-      supportedLocales: [const Locale('en'), const Locale('fr')], // Optional is provider is present
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('fr')
+      ], // Optional is provider is present
       langConfigFile: 'config.json', // Optional is provider is present
       langDirectory: 'assets/lang/', // Optional is provider is present
       theme: ThemeData(
@@ -53,10 +54,9 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(
-          title: 'Translator App'
+      home: MyHomePage(title: 'Translator App'
           //title: translate('home_title') //Only use if a singleton is instantiated and loaded.
-      ),
+          ),
     );
   }
 }
@@ -95,7 +95,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //

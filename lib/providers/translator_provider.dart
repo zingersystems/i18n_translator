@@ -165,7 +165,6 @@ mixin TranslatorProviderMixin {
   ///   ]
   /// }
   Future<Map<String, dynamic>> load([Locale locale]) async {
-
     // Assign the default locale if none was passed.
     locale ??= delegate.locale;
 
