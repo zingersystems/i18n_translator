@@ -67,27 +67,29 @@ An example config file may be as shown below.
 
 See the main files provided with the accompanying example project for the different ways you may use this package.
 
-We provided a **singleton** and a **widget** approach. 
-We also made available "global" variables **Translator**, **translaor**, **translate** and **t** to ease access to the i18n_translator provider/delegate and the translation functions that package users may call often.
+We provided three options for you: **Simple Provider**, **Bloc Provider** and a **Widget** approach. 
+We also made available "global" variable and function **translator**, **translate** and **t** to ease access to the i18n_translator provider/bloc and the translation functions that package users may call often.
 
-Below is a quick example below that shows how to use the package. 
+Below is a quick example below that shows how to use the package. Do not forget to import relevant packages.
 
-### Singleton provider approach
+### Simple Provider Approach
 ``` dart
 
-// Import relevant packages
-import 'package:i18n_translator/i18n_translator.dart';
+// Define a static instance of the the Translator provider.
+translator = TranslatorProvider(
+  //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
+  supportedLocales: [const Locale('en'), const Locale('fr')],
+  langConfigFile: 'config.json',
+  langDirectory: 'assets/lang/');
 
-// Using the global 'translator' variable name and the singleton constructor 'Translator'.
-translator = Translator(
-    //Keep locales as wide as possible. Use en instead of en_CM or en_US
-    supportedLocales: [const Locale('en'), const Locale('fr')],
-    langConfigFile: 'config.json',
-    langDirectory: 'assets/lang/'
-);
+/// When material app is built, the load method of the delegate will be called
+/// and the translator provider will load the translation strings.
+/// This however results in a situation where translations are not loaded for
+/// the home screen or page initially. To solve this, you may want to call
+/// the method of the provider early but this results in loading twice.
 
-// Fetch the mapped key-value pairs representing the translations for the provider/delegate.
-await translator.load(); // When no locale is passed, uses saved or default supported locale.
+// Call the load method directly from the provider
+await translator.load();
 
 // Get translation
 translate('my_translation_key');
@@ -98,23 +100,23 @@ translate('module_1_my_translation_key');
 
 ```
 
-### Translator provider class approach
+### Bloc Provider Approach
 ``` dart
 
-// Import relevant packages
-import 'package:i18n_translator/i18n_translator.dart';
-import 'providers/translator_provider.dart';
+// Define a static instance of the the Translator provider.
+  translator = TranslatorProviderBloc(
+      //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
+      supportedLocales: [const Locale('en'), const Locale('fr')],
+      langConfigFile: 'config.json',
+      langDirectory: 'assets/lang/'
+  );
 
-// Using the TranslatorProvider class.
-final translatorProvider = TranslatorProvider(
-    //Keep locales as wide as possible. Use en instead of en_CM or en_US
-    supportedLocales: [const Locale('en'), const Locale('fr')],
-    langConfigFile: 'config.json',
-    langDirectory: 'assets/lang/'
-);
+  /// When material app is built, the load method of the delegate will be called
+  /// and the translator bloc LoadEvent will fire loading the translation.
+  /// The bloc will go to the LoadingState and then LoadedState.
 
-// Fetch the mapped key-value pairs representing the translations for the provider/delegate.
-await translatorProvider.load(); // When no locale is passed, uses saved or default supported locale.
+// Load the translation by triggering a bloc event
+translator.add(LoadEvent());
 
 // Get translation
 translatorProvider.translate('my_translation_key');
@@ -125,12 +127,8 @@ translatorProvider.translate('module_1_my_translation_key');
 
 ```
 
-### Translator widget approach
+### Translator Widget Approach
 ``` dart
-
-// Import relevant packages
-import 'package:i18n_translator/i18n_translator.dart';
-import 'package:i18n_translator/views/translator_widget/translator_widget.dart';
 
 TranslatorWidget(
     supportedLocales : [const Locale('en'), const Locale('fr')],
@@ -151,7 +149,7 @@ TranslatorWidget(
                     children: [
                         Text(
                             // Usage with variable
-                            mProvider.translate('my_translation_key', prefix: "module_1"), // This is called from translator
+                            mProvider.translate('my_translation_key', prefix: "module_1"), // This is called from mProvider
                         ),
                         Text(
                             // Usage with gloab translator variable
