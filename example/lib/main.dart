@@ -15,8 +15,9 @@ void main() async{
       langDirectory: 'assets/lang/'
   );
 
-  // Load the translation
-  //await translator.load();
+  // When material app is built, the load method of the delegate will be called
+  // and the translator bloc LoadEvent will fire loading the translation.
+  // The bloc will go to the LoadingState and then LoadedState.
 
   // Run the app
   runApp( MyApp() );

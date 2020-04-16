@@ -15,7 +15,11 @@ void main() async{
       langDirectory: 'assets/lang/'
   );
 
-  // Load the translation
+  // When material app is built, the load method of the delegate will be called
+  // and the translator provider will load the translation strings.
+  // This however results in a situation where translations are not loaded for
+  // the home screen or page initially. To solve this, you may want to call
+  // the method of the provider early but this results in loading twice.
   await translator.load();
 
   // Run the app

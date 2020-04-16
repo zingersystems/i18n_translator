@@ -14,14 +14,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    /// Example singleton translator provider instance defined but NOT loaded
-    /*translator = Translator(
-      //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
-        supportedLocales: [const Locale('en'), const Locale('fr')],
-        langConfigFile: 'config.json',
-        langDirectory: 'assets/lang/'
-    );*/
-
     /// Use a custom Material App as base of the widget.
     /// If [provider] is supplied, it will override [supportedLocales], [locale]
     /// [langConfigFile] and [langDirectory]. If not provided, then the other
@@ -62,7 +54,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(
-          title: 'Home'
+          title: 'Translator App'
           //title: translate('home_title') //Only use if a singleton is instantiated and loaded.
       ),
     );
