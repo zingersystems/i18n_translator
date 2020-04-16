@@ -18,11 +18,11 @@ typedef TranslationGetter<T> = T Function(String key, {String prefix});
 /// it is justified why we name the type Translator with capital T since
 /// it behaves like and instance of a class.
 // ignore: non_constant_identifier_names
-TranslatorProviderGetter<TranslatorProvider> Translator =
+TranslatorProviderGetter<TranslatorProviderMixin> Translator =
     TranslatorProvider.instance;
 
 /// Short hand for static instance of translator
-TranslatorProvider translator = Translator();
+TranslatorProviderMixin translator;
 
 /// Define a reference to the translation function as this may be use a lot.
 /// These short hands will return null if translator is null.

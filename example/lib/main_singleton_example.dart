@@ -7,15 +7,19 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
 
   // Define a static instance of the the Translator provider.
-  await Translator(
+  translator = Translator(
     //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
-    supportedLocales: [const Locale('en'), const Locale('fr')],
-    langConfigFile: 'config.json',
-    langDirectory: 'assets/lang/'
-  ).load();
+      supportedLocales: [const Locale('en'), const Locale('fr')],
+      langConfigFile: 'config.json',
+      langDirectory: 'assets/lang/'
+  );
+
+  // Load the translation
+  await translator.load();
 
   // Run the app
   runApp( MyApp() );
+
 }
 
 class MyApp extends StatelessWidget {

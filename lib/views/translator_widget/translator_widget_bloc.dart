@@ -18,6 +18,7 @@ class TranslatorWidgetBloc
       : assert((provider != null) || (supportedLocales != null)),
         assert((provider != null) || (langConfigFile != null)),
         assert((provider != null) || (langDirectory != null)) {
+
     // Ensure to initialize the provider
     provider ??= TranslatorProvider(
         supportedLocales: supportedLocales,
@@ -29,6 +30,7 @@ class TranslatorWidgetBloc
       // Run the initializer process if the provider was not already loaded
       this.add(InitEvent());
     }
+
   }
 
   @override
@@ -45,8 +47,8 @@ class TranslatorWidgetBloc
       TranslatorWidgetEvent event) async* {
     if (event is InitEvent) {
       yield* _mapInitEventToState(event);
-    } else if (event is UpdateLocaleEvent) {
-      yield* _mapUpdateLocaleEventToState(event);
+    } else if (event is LoadEvent) {
+      yield* _mapLoadEventToState(event);
     }
   }
 
@@ -57,8 +59,8 @@ class TranslatorWidgetBloc
     yield BuildState(event);
   }
 
-  Stream<TranslatorWidgetState> _mapUpdateLocaleEventToState(
-      UpdateLocaleEvent event) async* {
+  Stream<TranslatorWidgetState> _mapLoadEventToState(
+      LoadEvent event) async* {
     // Load the translation strings
     yield LoadingState(event);
     await provider?.load(event.locale);

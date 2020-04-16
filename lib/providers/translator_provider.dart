@@ -6,24 +6,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_device_locale/flutter_device_locale.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
-  List<Locale> _supportedLocales;
-  Locale _locale;
-  String _langConfigFile;
-  String _langDirectory;
+import '../bloc/translator_provider_bloc/bloc.dart';
 
+class TranslatorProvider with TranslatorProviderMixin {
   TranslatorProvider(
       {@required List<Locale> supportedLocales,
-      Locale locale,
       String langConfigFile = 'config.json',
-      String langDirectory = 'assets/lang/'}) {
-    assert((supportedLocales?.isNotEmpty == true),
-        "The list of supported locales must be set.");
-
-    this._supportedLocales = supportedLocales;
-    this._locale = locale;
-    this._langConfigFile = langConfigFile;
-    this._langDirectory = langDirectory;
+      String langDirectory = 'assets/lang/',
+      Locale locale})
+      : assert(supportedLocales != null) {
+    // Let's create a new delegate based on the constructor parameters
+    delegate = TranslatorProviderDelegate(
+        supportedLocales: supportedLocales,
+        langConfigFile: langConfigFile,
+        langDirectory: langDirectory,
+        provider: this);
   }
 
   /// Define a static method that will play the role of a singleton if needed.
@@ -31,6 +28,7 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
   /// the first call to create the instance. Thereafter, it will return the
   /// lone existing instance irrespective of passed parameters.
   static TranslatorProvider _instance;
+
   static TranslatorProvider instance(
       {@required List<Locale> supportedLocales,
       Locale locale,
@@ -51,46 +49,64 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
       return null;
     }
   }
+}
+
+mixin TranslatorProviderMixin {
+  // Translator delegate that
+  TranslatorProviderDelegate delegate;
 
   // Let's define some internal variables
-  String _savedLocaleKey = 'savedLocale';
-  Map<String, dynamic> _sentences;
+  final String savedLocaleKey = 'savedLocale';
+  final Map<String, dynamic> sentences = {};
 
   /// Returns whether or not the sentences for this translation provider are loaded
   bool get isLoaded {
-    return (_locale != null) && (_sentences?.isNotEmpty == true);
+    return (delegate?.locale != null) && (sentences?.isNotEmpty == true);
   }
 
   /// Getter and Setter for the langConfigFile
   String get langConfigFile {
-    return _langConfigFile;
+    return delegate.langConfigFile;
   }
 
   /// Getter and Setter for the langDirectory
   String get langDirectory {
-    return _langDirectory;
+    return delegate.langDirectory;
   }
 
   /// Getter and Setter for the current local
   Locale get locale {
-    return _locale;
-  }
-
-  set locale(Locale locale) {
-    assert(isSupported(locale),
-        "The locale ($locale) that is being set is not contained in supported locales for the defined Translator.");
-    _locale = locale;
+    return delegate.locale;
   }
 
   /// Getter for supportedLocales
   List<Locale> get supportedLocales {
-    return _supportedLocales;
+    return delegate.supportedLocales;
+  }
+
+  /// Sets a new locale for the Translator Provider
+  Future<void> setLocale(Locale locale) async {
+    assert(isSupported(locale),
+        "The locale ($locale) that is being set is not contained in supported locales for the defined Translator.");
+
+    // Check that it is not same as old locale
+    if (locale?.toString()?.toLowerCase() !=
+        delegate.locale?.toString()?.toLowerCase()) {
+      // Create new delegate based on the current.
+      delegate = TranslatorProviderDelegate(
+          supportedLocales: delegate.supportedLocales,
+          locale: locale,
+          provider: this);
+
+      // Initiate loading of the translation based on new locale
+      await delegate.load(locale);
+    }
   }
 
   /// Getter for supportedLocales
   List<LocalizationsDelegate> get delegates {
     return [
-      this,
+      delegate,
 //      GlobalMaterialLocalizations.delegate,
 //      GlobalWidgetsLocalizations.delegate,
 //      GlobalCupertinoLocalizations.delegate
@@ -100,11 +116,11 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
   /// Resolves the locale to be used
   Locale resolveSupportedLocale(Locale locale,
       [Iterable<Locale> supportedLocales]) {
-    supportedLocales ??= (_supportedLocales ?? []);
+    supportedLocales ??= delegate.supportedLocales;
 
     if (locale == null) {
       debugPrint("Language locale to resolve is NULL!!!");
-      return _supportedLocales.first;
+      return delegate.supportedLocales.first;
     }
 
     for (Locale loc in supportedLocales) {
@@ -125,7 +141,7 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
     }
 
     // Return the locale that was found.
-    return _supportedLocales.first;
+    return delegate.supportedLocales.first;
   }
 
   /// Returns the default supported locale
@@ -147,26 +163,10 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
     }
   }
 
-  /// Sets the locale based on the current context.
-  /// and loads the translation strings if the passed [locale] is different
-  /// from the current
-  Future<void> setLocale(Locale locale) async {
-    // We need to make sure the locale that is being set is supported
-    assert(isSupported(locale),
-        "The locale ($locale) that is being set is not contained in supported locales for the defined Translator.");
-
-    // Check that it is not same as old locale
-    if (locale?.toString()?.toLowerCase() !=
-        _locale?.toString()?.toLowerCase()) {
-      // Reload the translation via this provider or delegate
-      await this.load(locale);
-    }
-  }
-
   String t(String key, {String prefix}) {
     key = (prefix?.isNotEmpty == true) ? "${prefix}_$key" : key;
-    return (_sentences?.containsKey(key) == true)
-        ? _sentences[key].toString()
+    return (sentences?.containsKey(key) == true)
+        ? sentences[key].toString()
         : key;
   }
 
@@ -192,20 +192,13 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
   ///   ]
   /// }
   Future<Map<String, dynamic>> load([Locale locale]) async {
-    // If loading for the first time, we give preference to persisted locale - if any
-    // If null, set the locale to the current, persisted, default supported or first supported in that order
-    locale ??= (_locale ??
-        await getSavedLocale() ??
-        await defaultSupportedLocale() ??
-        _supportedLocales.first);
-
-    // We need to make sure the locale that is being set is contained in supported locales
-    assert(isSupported(locale),
-        "The locale ($locale) that translation is requested for is not contained in supported locales for the defined Translator.");
+    // Assign the default locale if none was passed.
+    locale ??= delegate.locale;
 
     // First we read the config file to extract the other translation files.
-    Map _config = json
-        .decode(await rootBundle.loadString("$_langDirectory$_langConfigFile"));
+    final _config = json.decode(await rootBundle
+        .loadString("${delegate.langDirectory}${delegate.langConfigFile}"));
+
     if (_config?.isNotEmpty == true) {
       // Let's search for keys that march that of our locale
       String _localeKey = locale.toString().toLowerCase();
@@ -227,8 +220,8 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
             String prefix = entry['prefix'].toString();
             String filename = entry['filename'].toString();
 
-            Map _trans = json.decode(
-                await rootBundle.loadString("$_langDirectory$filename"));
+            Map _trans = json.decode(await rootBundle
+                .loadString("${delegate.langDirectory}$filename"));
 
             if (_trans?.isNotEmpty == true) {
               (_translations ??= {}).addAll(_trans.map((key, value) {
@@ -237,8 +230,8 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
             }
           } else if (entry is String) {
             String filename = entry;
-            Map _trans = json.decode(
-                await rootBundle.loadString("$_langDirectory$filename"));
+            Map _trans = json.decode(await rootBundle
+                .loadString("${delegate.langDirectory}$filename"));
             if (_trans?.isNotEmpty == true) {
               (_translations ??= {}).addAll(_trans);
             }
@@ -247,10 +240,9 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
 
         // At this stage, all went well.
         if (_translations?.isNotEmpty == true) {
-          // Set the current locale to this one just loaded
-          _locale = locale;
-          _sentences = _translations;
-          return _sentences;
+          sentences.clear();
+          sentences.addAll(_translations);
+          return sentences;
         }
       }
     }
@@ -260,14 +252,13 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
   }
 
   /// Checks if a locale is supported
-  @override
   bool isSupported(Locale locale) {
     if (locale == null) {
       debugPrint("Locale to check if supported is null!!!");
       return false;
     }
 
-    for (Locale loc in (_supportedLocales ?? [])) {
+    for (Locale loc in delegate.supportedLocales) {
       if (loc.countryCode?.isNotEmpty == true) {
         // Check the case when the country code is set
         if ((loc.languageCode.toLowerCase() ==
@@ -286,26 +277,25 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
     return false;
   }
 
-  @override
-  bool shouldReload(TranslatorProvider old) {
+  bool shouldReload(LocalizationsDelegate<Map<String, dynamic>> old) {
     return false;
   }
 
   /// Saves the current locale or one that is passed to shared preference storage
   Future<void> saveLocale([Locale locale]) async {
-    locale ??= _locale;
+    locale ??= delegate.locale;
     assert(isSupported(locale),
         "The locale ($locale) that is being saved is not contained in supported locales for the defined Translator.");
 
     final _preferences = await SharedPreferences.getInstance();
     await _preferences.setString(
-        _savedLocaleKey, "${locale.languageCode}_${locale.countryCode}");
+        savedLocaleKey, "${locale.languageCode}_${locale.countryCode}");
   }
 
   /// Gets the saved locale from shared preference storage
   Future<Locale> getSavedLocale() async {
     final _preferences = await SharedPreferences.getInstance();
-    final _strLocale = _preferences.getString(_savedLocaleKey);
+    final _strLocale = _preferences.getString(savedLocaleKey);
     final locale = _strLocale != null ? _localeFromString(_strLocale) : null;
 
     return locale;
@@ -324,6 +314,65 @@ class TranslatorProvider extends LocalizationsDelegate<Map<String, dynamic>> {
   /// Removes saved locale from shared preference storage
   Future<void> deleteSavedLocale() async {
     final _preferences = await SharedPreferences.getInstance();
-    await _preferences.remove(_savedLocaleKey);
+    await _preferences.remove(savedLocaleKey);
+  }
+}
+
+class TranslatorProviderDelegate
+    extends LocalizationsDelegate<Map<String, dynamic>> {
+  final List<Locale> supportedLocales;
+  Locale _locale;
+  final String langConfigFile;
+  final String langDirectory;
+
+  final TranslatorProviderMixin provider;
+
+  TranslatorProviderDelegate(
+      {@required this.supportedLocales,
+      @required this.provider,
+      Locale locale,
+      this.langConfigFile = 'config.json',
+      this.langDirectory = 'assets/lang/'})
+      : assert(supportedLocales?.isNotEmpty == true) {
+    this._locale = locale;
+  }
+
+  /// Getter for the private locale variable
+  get locale {
+    return _locale;
+  }
+
+  @override
+  Future<Map<String, dynamic>> load([Locale locale]) async {
+    // If loading for the first time, we give preference to persisted locale - if any
+    // If null, set the locale to the current, persisted, default supported or first supported in that order
+    locale ??= (locale ??
+        await provider.getSavedLocale() ??
+        await provider.defaultSupportedLocale() ??
+        supportedLocales.first);
+
+    // We need to make sure the locale that is being set is contained in supported locales
+    assert(isSupported(locale),
+        "The locale ($locale) that translation is requested for is not contained in supported locales for the defined Translator Delegate.");
+
+    // Assign the current locale to this delegate
+    _locale = locale;
+
+    if (provider is TranslatorProviderBloc) {
+      (provider as TranslatorProviderBloc).add(LoadEvent(locale));
+    } else {
+      // Ask the provider to load translations based on this locale
+      return await provider.load(locale);
+    }
+  }
+
+  @override
+  bool isSupported(Locale locale) {
+    return provider.isSupported(locale);
+  }
+
+  @override
+  bool shouldReload(LocalizationsDelegate<Map<String, dynamic>> old) {
+    return provider.shouldReload(old);
   }
 }

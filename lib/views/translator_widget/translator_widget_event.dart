@@ -4,7 +4,7 @@ abstract class TranslatorWidgetEvent {}
 
 class InitEvent extends TranslatorWidgetEvent {}
 
-class UpdateLocaleEvent extends TranslatorWidgetEvent {
+class LoadEvent extends TranslatorWidgetEvent {
   final Locale locale;
-  UpdateLocaleEvent([this.locale]);
+  LoadEvent([this.locale]);
 }
