@@ -1,3 +1,6 @@
+## 0.1.7
+* Updated shared preference and flutter_bloc packages.
+
 ## 0.1.6
 * Updated Readme to reflect the new approach with proper examples.
 
