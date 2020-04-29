@@ -1,3 +1,6 @@
+## 0.1.8
+* Added support to specify that delegate be reloaded. This may be handy during development.
+
 ## 0.1.7
 * Updated shared preference and flutter_bloc packages.
 

@@ -13,6 +13,7 @@ class TranslatorProvider with TranslatorProviderMixin {
       {@required List<Locale> supportedLocales,
       String langConfigFile = 'config.json',
       String langDirectory = 'assets/lang/',
+      bool reload = false,
       Locale locale})
       : assert(supportedLocales != null) {
     // Let's create a new delegate based on the constructor parameters
@@ -20,6 +21,7 @@ class TranslatorProvider with TranslatorProviderMixin {
         supportedLocales: supportedLocales,
         langConfigFile: langConfigFile,
         langDirectory: langDirectory,
+        reload: reload,
         provider: this);
   }
 }
@@ -251,7 +253,7 @@ mixin TranslatorProviderMixin {
   }
 
   bool shouldReload(LocalizationsDelegate<Map<String, dynamic>> old) {
-    return false;
+    return this.delegate.reload;
   }
 
   /// Saves the current locale or one that is passed to shared preference storage
@@ -297,6 +299,7 @@ class TranslatorProviderDelegate
   Locale _locale;
   final String langConfigFile;
   final String langDirectory;
+  final bool reload;
 
   final TranslatorProviderMixin provider;
 
@@ -305,7 +308,9 @@ class TranslatorProviderDelegate
       @required this.provider,
       Locale locale,
       this.langConfigFile = 'config.json',
-      this.langDirectory = 'assets/lang/'})
+      this.langDirectory = 'assets/lang/',
+      this.reload = false,
+      })
       : assert(supportedLocales?.isNotEmpty == true) {
     this._locale = locale;
   }
@@ -333,6 +338,7 @@ class TranslatorProviderDelegate
 
     if (provider is TranslatorProviderBloc) {
       (provider as TranslatorProviderBloc).add(LoadEvent(locale));
+      return null;
     } else {
       // Ask the provider to load translations based on this locale
       return await provider.load(locale);
