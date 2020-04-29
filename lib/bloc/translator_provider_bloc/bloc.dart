@@ -21,6 +21,7 @@ class TranslatorProviderBloc
       this.langConfigFile = 'config.json',
       this.langDirectory = 'assets/lang/',
       this.init = false,
+      bool reload = false,
       this.locale})
       : assert(supportedLocales != null) {
     // Initialize the delegate for this provider
@@ -28,6 +29,7 @@ class TranslatorProviderBloc
         supportedLocales: supportedLocales,
         langConfigFile: langConfigFile,
         langDirectory: langDirectory,
+        reload: reload,
         provider: this);
 
     // Ensure to initialize the provider if asked

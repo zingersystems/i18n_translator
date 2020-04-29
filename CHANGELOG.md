@@ -1,3 +1,6 @@
+## 0.1.9
+* Added reload option to Translator Bloc.
+
 ## 0.1.8
 * Added support to specify that delegate be reloaded. This may be handy during development.
 
