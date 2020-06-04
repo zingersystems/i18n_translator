@@ -1,6 +1,6 @@
 name: i18n_translator
 description: A flutter package designed to make internationalizing your flutter app a breeze.
-version: 0.1.9
+version: 0.2.0
 homepage: https://github.com/zingersystems/i18n_translator
 
 environment:
@@ -11,9 +11,9 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  shared_preferences: ^0.5.7
+  shared_preferences: ^0.5.7+3
   flutter_bloc: ^4.0.0
-  flutter_device_locale: ^0.4.0
+  devicelocale: ^0.2.3
 
 dev_dependencies:
   flutter_test:

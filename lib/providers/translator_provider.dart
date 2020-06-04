@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter_device_locale/flutter_device_locale.dart';
+import 'package:devicelocale/devicelocale.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../bloc/translator_provider_bloc/bloc.dart';
@@ -49,7 +49,16 @@ mixin TranslatorProviderMixin {
     return delegate.langDirectory;
   }
 
-  /// Getter and Setter for the current local
+  /// Gets default locale or locale in use. Default is true
+  Locale getLocale({bool defaultLocale = true}) {
+    if (defaultLocale){
+      return delegate.defaultLocale;
+    } else {
+      return delegate.locale;
+    }
+  }
+
+  /// Getter for supportedLocales
   Locale get locale {
     return delegate.locale;
   }
@@ -120,22 +129,18 @@ mixin TranslatorProviderMixin {
   }
 
   /// Returns the default supported locale
-  Future<Locale> defaultSupportedLocale([BuildContext context]) async {
-    return resolveSupportedLocale(await currentLocale(context));
+  Future<Locale> get defaultSupportedLocale async {
+    return resolveSupportedLocale(await defaultLocale);
   }
 
   /// Returns the current user preferred locales
-  Future<List<Locale>> currentLocales([BuildContext context]) async {
-    return await DeviceLocale.getPreferredLocales();
+  Future<List<Locale>> get defaultLocales async {
+    return (await Devicelocale.preferredLanguages).map((e) => Locale(e)).toList();
   }
 
   /// Returns the current device locale based on passed context of present
-  Future<Locale> currentLocale([BuildContext context]) async {
-    if (context != null) {
-      return Localizations.localeOf(context);
-    } else {
-      return await DeviceLocale.getCurrentLocale();
-    }
+  Future<Locale> get defaultLocale async {
+    return Locale(await Devicelocale.currentLocale);
   }
 
   String t(String key, {String prefix}) {
@@ -310,13 +315,17 @@ class TranslatorProviderDelegate
       this.langConfigFile = 'config.json',
       this.langDirectory = 'assets/lang/',
       this.reload = false,
-      })
-      : assert(supportedLocales?.isNotEmpty == true) {
+      }) : assert(supportedLocales?.isNotEmpty == true) {
     this._locale = locale;
   }
 
+  Locale _defaultLocale;
+  Locale get defaultLocale {
+    return _defaultLocale;
+  }
+
   /// Getter for the private locale variable
-  get locale {
+  Locale get locale {
     return _locale;
   }
 
@@ -326,7 +335,7 @@ class TranslatorProviderDelegate
     // If null, set the locale to the current, persisted, default supported or first supported in that order
     locale ??= (locale ??
         await provider.getSavedLocale() ??
-        await provider.defaultSupportedLocale() ??
+        await provider.defaultSupportedLocale ??
         supportedLocales.first);
 
     // We need to make sure the locale that is being set is contained in supported locales
@@ -335,6 +344,9 @@ class TranslatorProviderDelegate
 
     // Assign the current locale to this delegate
     _locale = locale;
+
+    // Assign default locale
+    _defaultLocale = await provider.defaultLocale;
 
     if (provider is TranslatorProviderBloc) {
       (provider as TranslatorProviderBloc).add(LoadEvent(locale));

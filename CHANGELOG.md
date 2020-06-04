@@ -1,3 +1,6 @@
+## 0.2.0
+* Added features to get default system locales.
+
 ## 0.1.9
 * Added reload option to Translator Bloc.
 
