@@ -1,3 +1,6 @@
+## 0.2.1
+* Modified plugin feature to get default system locales.
+
 ## 0.2.0
 * Added features to get default system locales.
 

@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:devicelocale/devicelocale.dart';
+import 'package:flutter_device_locale/flutter_device_locale.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../bloc/translator_provider_bloc/bloc.dart';
@@ -135,12 +135,12 @@ mixin TranslatorProviderMixin {
 
   /// Returns the current user preferred locales
   Future<List<Locale>> get defaultLocales async {
-    return (await Devicelocale.preferredLanguages).map((e) => Locale(e)).toList();
+    return await DeviceLocale.getPreferredLocales();
   }
 
   /// Returns the current device locale based on passed context of present
   Future<Locale> get defaultLocale async {
-    return Locale(await Devicelocale.currentLocale);
+    return await DeviceLocale.getCurrentLocale();;
   }
 
   String t(String key, {String prefix}) {

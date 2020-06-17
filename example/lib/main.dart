@@ -12,7 +12,9 @@ void main() async {
       //Note: Keep locales as wide as possible. Use en instead of en_CM or en_US
       supportedLocales: [const Locale('en'), const Locale('fr')],
       langConfigFile: 'config.json',
-      langDirectory: 'assets/lang/');
+      langDirectory: 'assets/lang/',
+      init: true
+  );
 
   // When material app is built, the load method of the delegate will be called
   // and the translator bloc LoadEvent will fire loading the translation.
