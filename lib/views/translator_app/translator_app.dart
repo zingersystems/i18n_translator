@@ -351,7 +351,7 @@ class _TranslatorMaterialAppState extends State<TranslatorMaterialApp> {
     _bloc = TranslatorWidgetBloc(
         supportedLocales:
             widget.provider?.supportedLocales ?? widget.supportedLocales,
-        locale: widget.provider?.locale ?? widget.locale,
+        locale: widget.provider?.supportedLocale ?? widget.locale,
         langConfigFile:
             widget.provider?.langConfigFile ?? widget.langConfigFile,
         langDirectory: widget.provider?.langDirectory ?? widget.langDirectory,

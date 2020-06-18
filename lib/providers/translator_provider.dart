@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter_device_locale/flutter_device_locale.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../bloc/translator_provider_bloc/bloc.dart';
@@ -25,6 +25,7 @@ class TranslatorProvider with TranslatorProviderMixin {
         provider: this);
   }
 }
+
 
 mixin TranslatorProviderMixin {
   // Translator delegate that
@@ -49,17 +50,9 @@ mixin TranslatorProviderMixin {
     return delegate.langDirectory;
   }
 
-  /// Gets default locale or locale in use. Default is true
-  Locale getLocale({bool defaultLocale = true}) {
-    if (defaultLocale){
-      return delegate.defaultLocale;
-    } else {
-      return delegate.locale;
-    }
-  }
 
   /// Getter for supportedLocales
-  Locale get locale {
+  Locale get supportedLocale {
     return delegate.locale;
   }
 
@@ -91,20 +84,22 @@ mixin TranslatorProviderMixin {
   List<LocalizationsDelegate> get delegates {
     return [
       delegate,
-//      GlobalMaterialLocalizations.delegate,
-//      GlobalWidgetsLocalizations.delegate,
-//      GlobalCupertinoLocalizations.delegate
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate
     ];
   }
 
   /// Resolves the locale to be used
-  Locale resolveSupportedLocale(Locale locale,
-      [Iterable<Locale> supportedLocales]) {
+  Locale resolveSupportedLocale(Locale locale, [Iterable<Locale> supportedLocales]) {
+
     supportedLocales ??= delegate.supportedLocales;
 
     if (locale == null) {
       debugPrint("Language locale to resolve is NULL!!!");
       return delegate.supportedLocales.first;
+    } else {
+      _userPreferredLocale = locale;
     }
 
     for (Locale loc in supportedLocales) {
@@ -128,20 +123,13 @@ mixin TranslatorProviderMixin {
     return delegate.supportedLocales.first;
   }
 
-  /// Returns the default supported locale
-  Future<Locale> get defaultSupportedLocale async {
-    return resolveSupportedLocale(await defaultLocale);
+
+  /// The user preferred locale
+  Locale _userPreferredLocale;
+  Locale get userPreferredLocale{
+    return _userPreferredLocale;
   }
 
-  /// Returns the current user preferred locales
-  Future<List<Locale>> get defaultLocales async {
-    return await DeviceLocale.getPreferredLocales();
-  }
-
-  /// Returns the current device locale based on passed context of present
-  Future<Locale> get defaultLocale async {
-    return await DeviceLocale.getCurrentLocale();;
-  }
 
   String t(String key, {String prefix}) {
     key = (prefix?.isNotEmpty == true) ? "${prefix}_$key" : key;
@@ -298,8 +286,7 @@ mixin TranslatorProviderMixin {
   }
 }
 
-class TranslatorProviderDelegate
-    extends LocalizationsDelegate<Map<String, dynamic>> {
+class TranslatorProviderDelegate extends LocalizationsDelegate<Map<String, dynamic>> {
   final List<Locale> supportedLocales;
   Locale _locale;
   final String langConfigFile;
@@ -319,11 +306,6 @@ class TranslatorProviderDelegate
     this._locale = locale;
   }
 
-  Locale _defaultLocale;
-  Locale get defaultLocale {
-    return _defaultLocale;
-  }
-
   /// Getter for the private locale variable
   Locale get locale {
     return _locale;
@@ -335,7 +317,7 @@ class TranslatorProviderDelegate
     // If null, set the locale to the current, persisted, default supported or first supported in that order
     locale ??= (locale ??
         await provider.getSavedLocale() ??
-        await provider.defaultSupportedLocale ??
+        provider.userPreferredLocale ??
         supportedLocales.first);
 
     // We need to make sure the locale that is being set is contained in supported locales
@@ -344,9 +326,6 @@ class TranslatorProviderDelegate
 
     // Assign the current locale to this delegate
     _locale = locale;
-
-    // Assign default locale
-    _defaultLocale = await provider.defaultLocale;
 
     if (provider is TranslatorProviderBloc) {
       (provider as TranslatorProviderBloc).add(LoadEvent(locale));

@@ -1,3 +1,7 @@
+## 0.2.2
+* Removed locale plugins that where reporting issues.
+* Added support to get user preferred locale.
+
 ## 0.2.1
 * Modified plugin feature to get default system locales.
 

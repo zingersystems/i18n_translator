@@ -11,7 +11,7 @@ class TranslatorProviderBloc
     extends Bloc<TranslatorProviderBlocEvent, TranslatorProviderBlocState>
     with TranslatorProviderMixin {
   final List<Locale> supportedLocales;
-  final Locale locale;
+  final Locale supportedLocale;
   final String langConfigFile;
   final String langDirectory;
   final bool init;
@@ -22,7 +22,7 @@ class TranslatorProviderBloc
       this.langDirectory = 'assets/lang/',
       this.init = false,
       bool reload = false,
-      this.locale})
+      this.supportedLocale})
       : assert(supportedLocales != null) {
     // Initialize the delegate for this provider
     delegate = TranslatorProviderDelegate(
